@@ -1,15 +1,32 @@
 services:
   frontend:
-    build:
-      context: frontend
-      target: development
+    container_name: hipersend_app
+    user: 'node'
+    restart: unless-stopped
+    env_file: .env
+    command: 'yarn start'
     ports:
-      - 3000:3000
+        - 3000:3000
+    environment:
+        - STRING_DB=${STRING_DB}
     volumes:
-      - ./frontend/src:/code/src
-      - /code/node_modules
-    networks:
-      - public
+        - ./frontend:/home/node/app
+    working_dir: /home/node/app
+    image: node:17.2.0-alpine
+  backend:
+    container_name: hipersend_api
+    user: 'node'
+    restart: unless-stopped
+    env_file: .env
+    command: 'yarn start'
+    ports:
+        - 8080:8080
+    environment:
+        - STRING_DB=${STRING_DB}
+    volumes:
+        - ./backend:/home/node/api
+    working_dir: /home/node/api
+    image: node:17.2.0-alpine
 networks:
   public:
   private:
